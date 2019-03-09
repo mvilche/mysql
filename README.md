@@ -1,4 +1,4 @@
-# MYSQL 5.7 CENTOS 7
+# MYSQL 8 DEBIAN 9
 
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
@@ -15,7 +15,7 @@
 Ejecutar para iniciar el servicio
 
 ```sh
-$ docker run -d -e TIMEZONE=America/Montevideo -e MYSQL_OPTS=--character-set-server=utf8mb4 -e MYSQL_ROOT_PASSWORD=123456 mvilche/mysql:5.7-centos7
+$ docker run -d -e TIMEZONE=America/Montevideo -e MYSQL_OPTS=--character-set-server=utf8mb4 -V mysql_data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mvilche/mysql:8-debian9
 ```
 Eliga el tag según el sistema operativo desead
 
