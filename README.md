@@ -1,4 +1,4 @@
-# MYSQL 5.7 CENTOS 7
+# MYSQL 5.7
 
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
