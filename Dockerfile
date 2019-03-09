@@ -1,16 +1,19 @@
-FROM centos:7
-ENV MYSQL_REPO_URL=https://dev.mysql.com/get/mysql80-community-release-el7-2.noarch.rpm
-ENV MYSQL_VERSION=mysql-community-server-5.7.25-1.el7
-ENV MYSQL_REPO=mysql57-community
-RUN rm -rf /etc/localtime && touch /etc/localtime && chown 1001:1001 -R /etc/localtime && \
-rpm -ivh $MYSQL_REPO_URL && sed -i "s/enabled=1/enabled=0/g" /etc/yum.repos.d/mysql-community.repo && \
-yum install --setopt=tsflags=nodocs --enablerepo $MYSQL_REPO $MYSQL_VERSION -y && \
-yum autoremove -y && \
-yum clean all && rm -rf /var/cache/yum && rm -rf /usr/sbin/mysql-debug /usr/lib/systemd && \
+FROM debian:9
+ENV TIMEZONE=
+RUN apt update && apt install wget openssl procps libnuma1 libaio1 xz-utils -y && \
+groupadd mysql && \
+useradd -r -g mysql -s /bin/false mysql && \
+wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.15-linux-glibc2.12-x86_64.tar.xz -O mysql.tar.xz && \
+mkdir /opt/mysql /var/lib/mysql && tar xvf mysql.tar.xz  -C /opt/mysql --strip-components 1 && rm -rf mysql.tar.xz && \ 
+touch /etc/localtime && chown mysql:mysql -R /opt /var/lib/mysql /etc/localtime && \
 touch /tmp/mysql.log && \
 chown --dereference mysql /dev/stdout /dev/stderr /proc/self/fd/1 /proc/self/fd/2 /tmp/mysql.log && \
-ln -sf /dev/stdout /tmp/mysql.log && ln -sf /dev/stderr /tmp/mysql.log
+ln -sf /dev/stdout /tmp/mysql.log && ln -sf /dev/stderr /tmp/mysql.log && \
+ln -s /opt/mysql/bin/mysql /usr/bin/mysql && \
+apt remove wget xz-utils -y && apt clean && apt autoclean && apt autoremove -y
 USER mysql
 COPY run.sh /usr/bin/run.sh
+EXPOSE 3306
 ENTRYPOINT ["/usr/bin/run.sh"]
+VOLUME ["var/lib/mysql"]
 CMD ["--user=mysql", "--log-error=/tmp/mysql.log", "--bind-address=0.0.0.0", "--console"]
