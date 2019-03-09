@@ -1,7 +1,6 @@
 #!/bin/bash
 
 MYSQL_DATADIR=/var/lib/mysql
-
     if [ -z $MYSQL_OPTS ]; then
     echo "***************************************************"
     echo "NO SE ENCUENTRA LA VARIABLE MYSQL_OPTS - INICIANDO POR DEFECTO"
@@ -36,9 +35,8 @@ echo "·····································
 exit 1
 fi
 fi
-
-if [ -d /var/lib/mysql/mysql ]; then
-	echo "**********************************************"
+if find $MYSQL_DATADIR -mindepth 1 | read; then
+    echo "**********************************************"
     echo "EL SERVICIO MYSQL YA FUE INICIALIZADO - SE ENCONTRARON DATOS"
     echo "**********************************************"
 else
@@ -53,7 +51,8 @@ else
 	echo "***************************************************"
     echo "EL SERVICIO MYSQL NO SE HA INICIALIZADO - INICIALIZANDO..."
     echo "*******************************************************"
-    mysqld --initialize && chown mysql:mysql -R $MYSQL_DATADIR && \
+    /opt/mysql/bin/mysqld --initialize-insecure --datadir=$MYSQL_DATADIR && chown mysql:mysql -R $MYSQL_DATADIR && \
+    /opt/mysql/bin/mysql_ssl_rsa_setup --datadir=$MYSQL_DATADIR && \
     echo "*******************************************************" && \
 	echo "SERVICIO INICIALIZADO CORRECTAMENTE" && \
     echo "*******************************************************"
@@ -61,20 +60,19 @@ else
 	FILE=/tmp/script.sql
 
 cat << EOF > $FILE
-USE mysql;
-FLUSH PRIVILEGES;
-DELETE FROM mysql.user;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PdockASSWORD' WITH GRANT OPTION;
+ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY "$MYSQL_ROOT_PASSWORD";
 FLUSH PRIVILEGES;
 EOF
 	echo "DEFINIENDO PERMISOS...." && \
-	mysqld --user=mysql --bootstrap --verbose=0 < $FILE && \
+        /opt/mysql/bin/mysqld --daemonize  --datadir=$MYSQL_DATADIR
+	/opt/mysql/bin/mysql -uroot < $FILE && \
 	rm -f $FILE && \
     echo "*******************************************************" && \
-	echo "TAREAS COMPLETADAS CORRECTAMENTE." && \
+	echo "TAREAS COMPLETADAS CORRECTAMENTE."
+	pkill -9 mysqld
     echo "*******************************************************"
 fi
 
 echo "INICIANDO EL SERVICIO MYSQL...."
 sleep 5s
-exec mysqld $MYSQL_OPTS "$@"
+exec /opt/mysql/bin/mysqld --datadir=$MYSQL_DATADIR $MYSQL_OPTS "$@"
