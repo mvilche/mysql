@@ -60,8 +60,13 @@ else
 	FILE=/tmp/script.sql
 
 cat << EOF > $FILE
-ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY "$MYSQL_ROOT_PASSWORD";
-FLUSH PRIVILEGES;
+			SET @@SESSION.SQL_LOG_BIN=0;
+			ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD' ;
+			GRANT ALL ON *.* TO 'root'@'localhost' WITH GRANT OPTION ;
+			CREATE USER 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD' ;
+			GRANT ALL ON *.* TO 'root'@'%' WITH GRANT OPTION ;
+			DROP DATABASE IF EXISTS test ;
+			FLUSH PRIVILEGES ;
 EOF
 	echo "DEFINIENDO PERMISOS...." && \
         /opt/mysql/bin/mysqld --daemonize  --datadir=$MYSQL_DATADIR

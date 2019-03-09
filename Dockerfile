@@ -1,6 +1,6 @@
-FROM debian:9
+FROM centos:7
 ENV TIMEZONE=
-RUN apt update && apt install wget openssl procps libnuma1 libaio1 xz-utils -y && \
+RUN yum install openssl libaio numactl-libs wget -y && \
 groupadd mysql && \
 useradd -r -g mysql -s /bin/false mysql && \
 wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.15-linux-glibc2.12-x86_64.tar.xz -O mysql.tar.xz && \
@@ -10,7 +10,7 @@ touch /tmp/mysql.log && \
 chown --dereference mysql /dev/stdout /dev/stderr /proc/self/fd/1 /proc/self/fd/2 /tmp/mysql.log && \
 ln -sf /dev/stdout /tmp/mysql.log && ln -sf /dev/stderr /tmp/mysql.log && \
 ln -s /opt/mysql/bin/mysql /usr/bin/mysql && \
-apt remove wget xz-utils -y && apt clean && apt autoclean && apt autoremove -y
+yum remove wget -y && yum autoremove -y && yum clean all &&  rm -rf /var/cache/yum
 USER mysql
 COPY run.sh /usr/bin/run.sh
 EXPOSE 3306
