@@ -10,7 +10,9 @@ touch /tmp/mysql.log && \
 chown --dereference mysql /dev/stdout /dev/stderr /proc/self/fd/1 /proc/self/fd/2 /tmp/mysql.log && \
 ln -sf /dev/stdout /tmp/mysql.log && ln -sf /dev/stderr /tmp/mysql.log && \
 ln -s /opt/mysql/bin/mysql /usr/bin/mysql && \
-yum remove wget -y && yum autoremove -y && yum clean all &&  rm -rf /var/cache/yum
+yum remove wget -y && yum autoremove -y && yum clean all &&  rm -rf /var/cache/yum && \
+cd /opt/mysql/bin && rm -rf mysql_secure_installation my_print_defaults mysqld_multi mysqldumpslow mysqlrouter mysqld_safe myisampack myisamlog myisamchk myisam_ftdump my_print_defaultsm lz4_decompress mysqld-debug mysqlimport mysqlbinlog perror mysqlrouter_plugin_info mysqlpump mysql_upgrade mysqlshow mysqlslap zlib_decompress mysqldump mysqlcheck mysqladmin mysql_tzinfo_to_sql mysql_config_editor mysql_config innochecksum ibd2sdi && \
+cd - && rm -rf /opt/mysql/lib/plugin/* /opt/mysql/bin/lib/mecab/* /opt/mysql/bin/lib/mysqlrouter/* /opt/mysql/bin/lib/libmysqlrouter.so* /opt/mysql/man /opt/mysql/docs
 USER mysql
 COPY run.sh /usr/bin/run.sh
 EXPOSE 3306
