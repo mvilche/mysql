@@ -22,8 +22,6 @@ echo "·····································
 echo "TIMEZONE SETEADO ENCONTRADO: " $TIMEZONE
 echo "···································································································"
 echo "SETENADO TIMEZONE"
-ls -lh /etc
-ls -lh /usr/share/zoneinfo/
 cat /usr/share/zoneinfo/$TIMEZONE >> /etc/localtime && echo $TIMEZONE >> /etc/timezone;
 if [ $? -eq 0 ]; then
 echo "···································································································"
