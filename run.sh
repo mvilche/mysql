@@ -22,7 +22,7 @@ echo "·····································
 echo "TIMEZONE SETEADO ENCONTRADO: " $TIMEZONE
 echo "···································································································"
 echo "SETENADO TIMEZONE"
-cat /usr/share/zoneinfo/$TIMEZONE >> /etc/localtime && echo $TIMEZONE > /etc/timezone;
+cat /usr/share/zoneinfo/$TIMEZONE >> /etc/localtime && cat $TIMEZONE >> /etc/timezone;
 if [ $? -eq 0 ]; then
 echo "···································································································"
 echo "TIMEZONE SETEADO CORRECTAMENTE"
